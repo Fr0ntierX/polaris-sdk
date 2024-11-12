@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "lib": ["es2015", "dom"],
+    "module": "commonjs",
+    "rootDir": ".",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["node", "jest"]
+  },
+  "include": ["**/*.ts", "**/*.js"],
+  "exclude": ["node_modules"]
+}

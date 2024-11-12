@@ -1,0 +1,5 @@
+node_modules
+.eslintrc.js
+tsconfig.tsbuildinfo
+jest.config.js
+dist/
