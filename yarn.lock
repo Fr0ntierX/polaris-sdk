@@ -435,6 +435,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fr0ntier-x/polaris-sdk@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@fr0ntier-x/polaris-sdk@workspace:."
+  dependencies:
+    "@types/jest": "npm:^29.5.14"
+    "@types/node": "npm:^22.8.2"
+    "@types/pino": "npm:^7.0.5"
+    "@typescript-eslint/eslint-plugin": "npm:8.12.1"
+    "@typescript-eslint/parser": "npm:8.12.1"
+    axios: "npm:^1.7.7"
+    buffer: "npm:^6.0.3"
+    eslint: "npm:^8.57.1"
+    eslint-config-prettier: "npm:^9.1.0"
+    eslint-plugin-import: "npm:^2.31.0"
+    eslint-plugin-prettier: "npm:^5.2.1"
+    husky: "npm:^9.1.6"
+    jest: "npm:^29.7.0"
+    pino: "npm:^9.5.0"
+    prettier: "npm:3.3.3"
+    ts-jest: "npm:^29.2.5"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.6.3"
+  languageName: unknown
+  linkType: soft
+
 "@humanwhocodes/config-array@npm:^0.13.0":
   version: 0.13.0
   resolution: "@humanwhocodes/config-array@npm:0.13.0"
@@ -4504,31 +4529,6 @@ __metadata:
   checksum: 10c0/c56bda7769e04907a88423feb320babaed0711af8c436ce3e56763ab1021ba107c7b0cafb11cde7529f669cfc22bffcaebffb573645cbd63842ea9fb17cd7728
   languageName: node
   linkType: hard
-
-"polaris-sdk@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "polaris-sdk@workspace:."
-  dependencies:
-    "@types/jest": "npm:^29.5.14"
-    "@types/node": "npm:^22.8.2"
-    "@types/pino": "npm:^7.0.5"
-    "@typescript-eslint/eslint-plugin": "npm:8.12.1"
-    "@typescript-eslint/parser": "npm:8.12.1"
-    axios: "npm:^1.7.7"
-    buffer: "npm:^6.0.3"
-    eslint: "npm:^8.57.1"
-    eslint-config-prettier: "npm:^9.1.0"
-    eslint-plugin-import: "npm:^2.31.0"
-    eslint-plugin-prettier: "npm:^5.2.1"
-    husky: "npm:^9.1.6"
-    jest: "npm:^29.7.0"
-    pino: "npm:^9.5.0"
-    prettier: "npm:3.3.3"
-    ts-jest: "npm:^29.2.5"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.6.3"
-  languageName: unknown
-  linkType: soft
 
 "possible-typed-array-names@npm:^1.0.0":
   version: 1.0.0

@@ -1,7 +1,11 @@
 {
-  "name": "polaris-sdk",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@fr0ntier-x/polaris-sdk",
+  "version": "0.0.2",
+  "main": "dist/index.js",
+  "bugs": {
+    "url": "https://github.com/Fr0ntierX/polaris-sdk/issues"
+  },
+  "homepage": "https://github.com/Fr0ntierX/polaris-sdk",
   "scripts": {
     "build": "tsc",
     "format": "prettier  --check './**/*.{js,ts,md,json}'",
@@ -44,5 +48,11 @@
   "engines": {
     "node": "22.x"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.5.1",
+  "publishConfig": {
+    "access": "public",
+    "file": [
+      "dist"
+    ]
+  }
 }
