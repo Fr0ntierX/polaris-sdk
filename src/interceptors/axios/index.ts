@@ -3,10 +3,10 @@ import axios from "axios";
 import { getPublicKeyFromContainer } from "./utils";
 
 import type {
-  CreateRequestInterceptorParams,
-  CreateRequestInterceptorResponse,
-  CreateResponseInterceptorParams,
-  CreateResponseInterceptorResponse,
+  CreateAxiosRequestInterceptorParams,
+  CreateAxiosRequestInterceptorResponse,
+  CreateAxiosResponseInterceptorParams,
+  CreateAxiosResponseInterceptorResponse,
 } from "./types";
 import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
@@ -20,11 +20,11 @@ import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
  * @param {string} [polarisProxyBasePath] - The base path of the Polaris proxy.
  * @returns {CreateRequestInterceptorResponse} - A function that takes an Axios request configuration and returns a promise that resolves to the modified configuration.
  */
-export const createRequestInterceptor = ({
+export const createAxiosRequestInterceptor = ({
   polarisSDK,
   publicKey,
   polarisProxyBasePath = "",
-}: CreateRequestInterceptorParams): CreateRequestInterceptorResponse => {
+}: CreateAxiosRequestInterceptorParams): CreateAxiosRequestInterceptorResponse => {
   return async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
     // Fix the polarisProxyBasePath if needed
     if (polarisProxyBasePath && !polarisProxyBasePath.endsWith("/")) {
@@ -83,9 +83,9 @@ export const createRequestInterceptor = ({
  * @param {PolarisSDK} polarisSDK - The Polaris SDK instance.
  * @returns {CreateResponseInterceptorResponse} - A function that takes an Axios response and returns a promise that resolves to the modified response.
  */
-export const createResponseInterceptor = ({
+export const createAxiosResponseInterceptor = ({
   polarisSDK,
-}: CreateResponseInterceptorParams): CreateResponseInterceptorResponse => {
+}: CreateAxiosResponseInterceptorParams): CreateAxiosResponseInterceptorResponse => {
   return async (response: AxiosResponse): Promise<AxiosResponse> => {
     // Passthrough responses from the Polaris system endpoints
     const responseUrl = new URL(axios.getUri(response.config));

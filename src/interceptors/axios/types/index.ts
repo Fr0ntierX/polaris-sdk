@@ -1,18 +1,18 @@
-import type { PolarisSDK } from "../../..";
+import type { PolarisSDK } from "../../../sdk";
 import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
-export interface CreateRequestInterceptorParams {
+export interface CreateAxiosRequestInterceptorParams {
   polarisSDK: PolarisSDK;
   publicKey?: string;
   polarisProxyBasePath?: string;
 }
 
-export type CreateRequestInterceptorResponse = (
+export type CreateAxiosRequestInterceptorResponse = (
   config: InternalAxiosRequestConfig
 ) => Promise<InternalAxiosRequestConfig>;
 
-export interface CreateResponseInterceptorParams {
+export interface CreateAxiosResponseInterceptorParams {
   polarisSDK: PolarisSDK;
 }
 
-export type CreateResponseInterceptorResponse = (response: AxiosResponse) => Promise<AxiosResponse>;
+export type CreateAxiosResponseInterceptorResponse = (response: AxiosResponse) => Promise<AxiosResponse>;
