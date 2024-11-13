@@ -71,6 +71,9 @@ export const createAxiosRequestInterceptor = ({
       config.data = encryptedData;
     }
 
+    // Add the public key for the response encryption)
+    config.headers["polaris-response-public-key"] = await polarisSDK.getPublicKey();
+
     return config;
   };
 };
