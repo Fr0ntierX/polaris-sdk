@@ -53,7 +53,7 @@ export const createAxiosRequestInterceptor = ({
       const encryptedPath = await polarisSDK.encrypt(Buffer.from(requestPath), containerPublicKey);
 
       config.baseURL = undefined;
-      config.url = `${fullUrl.origin}/${polarisProxyBasePath}${encryptedPath.toString("hex")}`;
+      config.url = `${fullUrl.origin}/${polarisProxyBasePath}${encryptedPath.toString("base64url")}`;
     }
 
     // Encrypt the headers if they exist
@@ -62,7 +62,7 @@ export const createAxiosRequestInterceptor = ({
         Buffer.from(JSON.stringify(config.headers)),
         containerPublicKey
       );
-      config.headers["polaris-secure"] = encryptedHeaders.toString("hex");
+      config.headers["polaris-secure"] = encryptedHeaders.toString("base64url");
     }
 
     // Encrypt the body if it exists
@@ -72,7 +72,7 @@ export const createAxiosRequestInterceptor = ({
     }
 
     // Add the public key for the response encryption)
-    config.headers["polaris-response-public-key"] = await polarisSDK.getPublicKey();
+    config.headers["polaris-response-public-key"] = Buffer.from(await polarisSDK.getPublicKey()).toString("base64url");
 
     return config;
   };
@@ -99,8 +99,7 @@ export const createAxiosResponseInterceptor = ({
 
     // Decrypt the body if it exists
     if (response.data) {
-      response.data = await polarisSDK.decrypt(response.data);
-      response.config.responseType = "arraybuffer";
+      response.data = await polarisSDK.decrypt(Buffer.from(response.data, "base64"));
     }
 
     return response;

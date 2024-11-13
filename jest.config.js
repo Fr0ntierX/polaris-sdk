@@ -2,9 +2,9 @@
 const config = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/__tests__/**/*.test.ts", "**/?(*.)+(spec|test).ts"],
+  testMatch: ["tests/**/*.test.ts", "**/?(*.)+(spec|test).ts"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  roots: ["<rootDir>/src"],
+  roots: ["<rootDir>"],
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
