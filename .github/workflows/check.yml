@@ -1,0 +1,31 @@
+name: Check
+
+on:
+  pull_request:
+    types: [opened, reopened, converted_to_draft, ready_for_review, synchronize]
+    branches:
+      - dev
+    paths-ignore:
+      - ".gitignore"
+      - "**/README.md"
+      - "**/Dockerfile"
+
+jobs:
+  check:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+      - name: Setup Node Js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: "yarn"
+          cache-dependency-path: "yarn.lock"
+      - name: Install dependencies
+        run: yarn install
+      - name: Run formatting, lint and compile checks
+        run: yarn check
+      - name: Run unit tests
+        run: yarn test
