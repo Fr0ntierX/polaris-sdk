@@ -23,9 +23,21 @@ import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 export const createAxiosRequestInterceptor = ({
   polarisSDK,
   publicKey,
+  enableInputEncryption = true,
+  enableOutputEncryption = true,
   polarisProxyBasePath = "",
 }: CreateAxiosRequestInterceptorParams): CreateAxiosRequestInterceptorResponse => {
   return async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
+    // Add the public key for the response encryption if output encryption is used
+    if (enableOutputEncryption) {
+      config.headers["polaris-response-public-key"] = Buffer.from(await polarisSDK.getPublicKey()).toString(
+        "base64url"
+      );
+    }
+
+    // Skip changes if input encryption is disabled
+    if (!enableInputEncryption) return config;
+
     // Fix the polarisProxyBasePath if needed
     if (polarisProxyBasePath && !polarisProxyBasePath.endsWith("/")) {
       polarisProxyBasePath += "/";
@@ -70,9 +82,6 @@ export const createAxiosRequestInterceptor = ({
       const encryptedData = await polarisSDK.encrypt(Buffer.from(config.data), containerPublicKey);
       config.data = encryptedData;
     }
-
-    // Add the public key for the response encryption)
-    config.headers["polaris-response-public-key"] = Buffer.from(await polarisSDK.getPublicKey()).toString("base64url");
 
     return config;
   };

@@ -3,6 +3,8 @@ import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
 export interface CreateAxiosRequestInterceptorParams {
   polarisSDK: PolarisSDK;
+  enableInputEncryption?: boolean;
+  enableOutputEncryption?: boolean;
   publicKey?: string;
   polarisProxyBasePath?: string;
 }
