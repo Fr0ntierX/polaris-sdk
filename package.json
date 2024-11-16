@@ -1,6 +1,6 @@
 {
   "name": "@fr0ntier-x/polaris-sdk",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "bugs": {
     "url": "https://github.com/Fr0ntierX/polaris-sdk/issues"
@@ -46,7 +46,7 @@
     "typescript": "^5.6.3"
   },
   "engines": {
-    "node": "22.x"
+    "node": ">=18"
   },
   "packageManager": "yarn@4.5.1",
   "publishConfig": {
