@@ -63,7 +63,8 @@ export const createAxiosRequestInterceptor = ({
       const encryptedPath = await polarisSDK.encrypt(Buffer.from(requestPath), containerPublicKey);
 
       config.baseURL = undefined;
-      config.url = `${fullUrl.origin}/${polarisProxyBasePath}${encryptedPath.toString("base64")}`;
+      config.url = `${fullUrl.origin}/${polarisProxyBasePath}`;
+      config.headers["polaris-url"] = encryptedPath.toString("base64");
     }
 
     // Encrypt the headers if they exist
