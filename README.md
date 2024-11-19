@@ -1,22 +1,24 @@
 # Polaris SDK
 
-The Polaris SDK is a TypeScript library that implements encryption and decryption utilities for communication with [Polaris Secure Containers](https://www.fr0ntierx.com/polaris).
+Fr0ntierX’s Polaris SDK is a TypeScript library designed for encrypting and decrypting communications within [Polaris Secure Containers](https://www.fr0ntierx.com/polaris) and applications communicating with them.
 
 ## Overview
 
-The Polaris SDK allows the user to encrypt and decrypt data using an integrated assymetric encryption scheme that is based on RSA asymmetric encryption and AES-GCM symmetric encryption. For details about the implementation of the algorithm, please refer to the [Polaris Documentation](https://docs.fr0ntierx.com/polaris-sdk/encryption-scheme).
+Polaris SDK enables data encryption and decryption using an integrated asymmetric encryption scheme based on RSA asymmetric encryption and AES-GCM symmetric encryption. For more details on algorithm implementations, please refer to the [Polaris Documentation](https://docs.fr0ntierx.com/polaris-sdk/encryption-scheme).
 
 ### Environments
 
-The Polaris SDK can operate both in a browser context (using the [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)) and in a Node.js context (using the [Node.js Crypto API](https://nodejs.org/api/crypto.html)). This allows for both backend servers as well as browsers to directly communicated with [Polaris Secure Containers](https://www.fr0ntierx.com/polaris).
+Polaris SDK functions in both browser context (using the [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)) and in a Node.js context (using the [Node.js Crypto API](https://nodejs.org/api/crypto.html)). This enables both backend servers and browsers to directly communicate with [Polaris Secure Containers](https://www.fr0ntierx.com/polaris).
 
 ### Key Management
 
-The Polaris SDK can work with a variaty of keys. This functionality is abstracted by the `KeyHandler` interface. A `KeyHandler` is only required to implement the `getPublicKey` and `unwrap` methods, that require access to the private key. The symmetric encryption is handled by the SDK. We provide an ephemeral key handler as part of the SDK that generates a new key on initialization. More implmenetations are available as part of the [Polaris Proxy](https://github.com/Fr0ntierX/polaris-proxy).
+Polaris SDK supports various keys via the `KeyHandler` interface. A `KeyHandler` is only required to implement the `getPublicKey` and `unwrap` methods, that require access to the private key. The rest of the integrated encryption scheme is implemented by the SDK in an unified manner.
+
+We provide an ephemeral key handler as part of the SDK that generates a new key on each initialization. Additional implmenetations for permanent keys are available with the [Polaris Proxy](https://github.com/Fr0ntierX/polaris-proxy).
 
 ## Installation
 
-You can install the library using all JavaScript package managers.
+The SDK can be installed through any JavaScript package manager.
 
 ### NPM
 
@@ -32,7 +34,7 @@ yarn add @fr0ntier-x/polaris-sdk
 
 ## Usage
 
-The Polaris SDK is designed to be easy to use. The following example demonstrates how to encrypt and decrypt a message using the SDK and an ephemeral key.
+Polaris SDK is designed to be user-friendly. The following example demonstrates how to encrypt and decrypt messages using the SDK and an ephemeral key:
 
 ```typescript
 import { EphemeralKeyHandler, PolarisSDK } from "@fr0ntier-x/polaris-sdk";
@@ -50,7 +52,7 @@ console.log(decryptedMessage.toString()); // Hello from Polaris!
 
 ### Axios Interceptors
 
-If you are using `axios` to make HTTP requests, you can use the request and response interceptors provided by the SDK to automatically encrypt and decrypt the request and response data.
+If you are using `axios` for HTTP requests, you can use the [request and response interceptors](https://axios-http.com/docs/interceptors) provided by the SDK to automatically encrypt and decrypt the request and response data.
 
 ```typescript
 import { createAxiosRequestInterceptor, createAxiosResponseInterceptor } from "@fr0ntier-x/polaris-sdk";
@@ -61,16 +63,16 @@ axios.interceptors.response.use(createAxiosResponseInterceptor({ polarisSDK }));
 
 ## About Polaris
 
-Polaris Secure Containers enable the secure deployment of applications within a Trusted Execution Environment (TEE), encrypting all data in transit, and isolating sensitive information from the underlying infrastructure. To learn more about Polaris, please visit the [Polaris Secure Containers website](https://www.fr0ntierx.com/polaris).
+Fr0ntierX’s Polaris Secure Containers encrypt data throughout its lifecycle and isolate sensitive information from cloud providers or unauthorized entities by securing application deployment within a Trusted Execution Environment (TEE). For more information about Polaris Secure Containers, please visit the [website](https://www.fr0ntierx.com/polaris).
 
 ## Documentation
 
-You can find the full documentation for the Polaris SDK on the [Polaris Documentation](https://docs.fr0ntierx.com/polaris-sdk) website.
+For more information about the Polaris SDK, please visit the [Polaris Documentation website](https://docs.fr0ntierx.com/polaris-sdk).
 
 ## Support
 
-If you encounter any problmes please create an [Issue](https://github.com/Fr0ntierX/polaris-sdk/issues).
+If you encounter any problmes please refer to the [documentation](https://docs.fr0ntierx.com/polaris-sdk) or create an [Issue](https://github.com/Fr0ntierX/polaris-sdk/issues).
 
 ## License
 
-This Polaris SDK is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+Polaris SDK is licensed under Apache 2.0. For more details, please refer to the [LICENSE](LICENSE).
