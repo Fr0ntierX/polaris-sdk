@@ -1,6 +1,8 @@
+import { Readable } from "stream";
+
 import axios from "axios";
 
-import { getPublicKeyFromContainer } from "./utils";
+import { DecryptStream, EncryptStream, getPublicKeyFromContainer } from "./utils";
 
 import type {
   CreateAxiosRequestInterceptorParams,
@@ -78,8 +80,12 @@ export const createAxiosRequestInterceptor = ({
 
     // Encrypt the body if it exists
     if (config.data) {
-      const encryptedData = await polarisSDK.encrypt(Buffer.from(config.data), containerPublicKey);
-      config.data = encryptedData;
+      if (config.data instanceof Readable) {
+        config.data = config.data.pipe(new EncryptStream(polarisSDK));
+      } else {
+        const encryptedData = await polarisSDK.encrypt(Buffer.from(config.data), containerPublicKey);
+        config.data = encryptedData;
+      }
     }
 
     return config;
@@ -107,7 +113,11 @@ export const createAxiosResponseInterceptor = ({
 
     // Decrypt the body if it exists
     if (response.data) {
-      response.data = await polarisSDK.decrypt(Buffer.from(response.data, "base64"));
+      if (response.data instanceof Readable) {
+        response.data = response.data.pipe(new DecryptStream(polarisSDK));
+      } else {
+        response.data = await polarisSDK.decrypt(Buffer.from(response.data, "base64"));
+      }
     }
 
     return response;
