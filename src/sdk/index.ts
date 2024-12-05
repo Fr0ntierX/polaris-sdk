@@ -1,11 +1,12 @@
 import { CryptoProviderBrowser } from "../crypto/providers/browser";
 import { CryptoProviderNode } from "../crypto/providers/node";
 
+import type { PolarisSDKInterface } from "./types";
 import type { CryptoProvider } from "../crypto";
 import type { AESEncryptionData } from "../crypto/types";
 import type { KeyHandler } from "../key/types";
 
-export class PolarisSDK {
+export class PolarisSDK implements PolarisSDKInterface {
   // Key handler used to get access to the private key
   private readonly keyHandler: KeyHandler;
 
