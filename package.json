@@ -1,6 +1,6 @@
 {
   "name": "@fr0ntier-x/polaris-sdk",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "dist/index.js",
   "bugs": {
     "url": "https://github.com/Fr0ntierX/polaris-sdk/issues"
