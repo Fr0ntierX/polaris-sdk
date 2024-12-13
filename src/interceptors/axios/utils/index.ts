@@ -3,6 +3,7 @@ import { Readable, Transform } from "stream";
 import axios from "axios";
 
 import type { PolarisSDK } from "../../../sdk";
+import { AESKey } from "../../../crypto/types";
 
 /**
  * Fetches the public key from a specified Polaris container URL.
@@ -25,9 +26,14 @@ export const getPublicKeyFromContainer = async (containerUrl: string): Promise<s
  */
 export class EncryptStream extends Transform {
   private sdk: PolarisSDK;
-  constructor(sdk: PolarisSDK) {
+  private publicKey?: string;
+  private aesKey?: AESKey;
+
+  constructor(sdk: PolarisSDK, publicKey?: string, aesKey?: AESKey) {
     super();
     this.sdk = sdk;
+    this.publicKey = publicKey;
+    this.aesKey = aesKey;
   }
 
   /**
@@ -38,7 +44,10 @@ export class EncryptStream extends Transform {
    */
   async encrypt(data: string): Promise<Buffer> {
     try {
-      const publicKey = await this.sdk.getPublicKey();
+      const publicKey = this.publicKey || (await this.sdk.getPublicKey());
+      if (this.aesKey) {
+        return (await this.sdk.encryptWithPresetKey(Buffer.from(data), this.aesKey)) as Buffer;
+      }
       return this.sdk.encrypt(Buffer.from(data), publicKey);
     } catch (error: any) {
       throw new Error(`Failed to encrypt data: ${error.message}`);
@@ -67,9 +76,11 @@ export class EncryptStream extends Transform {
  */
 export class DecryptStream extends Transform {
   private sdk: PolarisSDK;
-  constructor(sdk: PolarisSDK) {
+  private aesKey?: AESKey;
+  constructor(sdk: PolarisSDK, aesKey?: AESKey) {
     super();
     this.sdk = sdk;
+    this.aesKey = aesKey;
   }
 
   /**
@@ -80,10 +91,16 @@ export class DecryptStream extends Transform {
    */
   async _transform(chunk: Buffer, encoding: string, callback: Function) {
     try {
-      const decryptedChunk = await this.sdk.decrypt(chunk);
+      let decryptedChunk;
+      if (this.aesKey) {
+        decryptedChunk = (await this.sdk.decryptWithPresetKey(chunk, this.aesKey)) as Buffer;
+      } else {
+        decryptedChunk = await this.sdk.decrypt(chunk);
+      }
       this.push(decryptedChunk);
       callback();
     } catch (error) {
+      console.error("decryption error", error);
       callback(error);
     }
   }

@@ -2,9 +2,10 @@ import { Buffer } from "buffer";
 
 import { CryptoProvider } from "../..";
 
-import type { AESEncryptionData } from "../../types";
+import type { AESEncryptionData, AESKey, EncryptedData } from "../../types";
 
 export class CryptoProviderBrowser extends CryptoProvider {
+
   private static async importPublicKey(pemKey: string): Promise<CryptoKey> {
     // Remove the PEM header and footer
     const pemHeader = "-----BEGIN PUBLIC KEY-----";
@@ -27,7 +28,7 @@ export class CryptoProviderBrowser extends CryptoProvider {
     );
   }
 
-  async wrapKey(key: Buffer, publicKey: string): Promise<Buffer> {
+  async wrapKey(key: Buffer | ArrayBuffer, publicKey: string): Promise<Buffer> {
     const publicKeyObject = await CryptoProviderBrowser.importPublicKey(publicKey);
 
     // Wrap the key using the public key
@@ -43,7 +44,39 @@ export class CryptoProviderBrowser extends CryptoProvider {
     return Buffer.from(wrappedKey);
   }
 
+  async createRandomAESKey(): Promise<AESKey> {
+    const key = await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt"]);
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+    return { key, iv };
+  }
+
+  async encryptWithPresetKey(data: Buffer | ArrayBuffer, aesKey: AESKey): Promise<ArrayBuffer> {
+    const encryption = await window.crypto.subtle.encrypt(
+      {
+        name: "AES-GCM",
+        iv: aesKey.iv,
+      },
+      aesKey.key,
+      data
+    );
+    return encryption;
+  }
+
+  async decryptWithPresetKey(data: Buffer | ArrayBuffer, aesKey: AESKey): Promise<ArrayBuffer> {
+    const decrypted = await window.crypto.subtle.decrypt(
+      {
+        name: "AES-GCM",
+        iv: aesKey.iv,
+        tagLength: 128,
+      },
+      aesKey.key,
+      data
+    );
+    return decrypted;
+  }
+
   async encryptWithRandomKey(data: Buffer): Promise<AESEncryptionData> {
+
     // Generate new AEW encryption key and IV
     const key = await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt"]);
     const iv = window.crypto.getRandomValues(new Uint8Array(12));
