@@ -7,7 +7,7 @@ export interface CreateAxiosRequestInterceptorParams {
   enableInputEncryption?: boolean;
   enableOutputEncryption?: boolean;
   publicKey?: string;
-  aesKey?: string;
+  aesKey?: AESKey;
   polarisProxyBasePath?: string;
 }
 

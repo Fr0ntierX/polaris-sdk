@@ -30,12 +30,23 @@ export const createAxiosRequestInterceptor = ({
   enableInputEncryption = true,
   enableOutputEncryption = true,
   polarisProxyBasePath = "",
-  aesKey
+  aesKey,
 }: CreateAxiosRequestInterceptorParams): CreateAxiosRequestInterceptorResponse => {
   return async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
+
+
     // Add the public key for the response encryption if output encryption is used
     if (enableOutputEncryption) {
       config.headers["polaris-response-public-key"] = Buffer.from(await polarisSDK.getPublicKey()).toString("base64");
+      if (aesKey) {
+        const pubKey = Buffer.from(publicKey as string, "base64").toString();
+        const wrappedKey = await polarisSDK.wrapKey(aesKey.key, pubKey);
+        const wrappedKeyB64 = wrappedKey.toString("base64");
+        const wrappedIv = await polarisSDK.wrapKey(aesKey.iv, pubKey);
+        const wrappedIvB64 = wrappedIv.toString("base64");
+        const wrappedKeyIV = `${wrappedKeyB64}:${wrappedIvB64}`;
+        config.headers["polaris-response-wrapped-key"] = wrappedKeyIV;
+      }
     }
 
     // Skip changes if input encryption is disabled
@@ -65,32 +76,34 @@ export const createAxiosRequestInterceptor = ({
     // Encrypt the request path if it exists
     const requestPath = fullUrl.pathname + fullUrl.search + fullUrl.hash;
     if (requestPath && requestPath != "/") {
-      const encryptedPath = await polarisSDK.encrypt(Buffer.from(requestPath), containerPublicKey);
+      const encryptedPath = aesKey ? await polarisSDK.encryptWithPresetKey(Buffer.from(requestPath), aesKey)
+        : await polarisSDK.encrypt(Buffer.from(requestPath), containerPublicKey);
 
       config.baseURL = undefined;
       config.url = `${fullUrl.origin}/${polarisProxyBasePath}`;
-      config.headers["polaris-url"] = encryptedPath.toString("base64");
+      config.headers["polaris-url"] = (encryptedPath as Buffer).toString("base64");
     }
 
     // Encrypt the headers if they exist
     if (config.headers) {
-      const encryptedHeaders = await polarisSDK.encrypt(
-        Buffer.from(JSON.stringify(config.headers)),
-        containerPublicKey
-      );
-      config.headers["polaris-secure"] = encryptedHeaders.toString("base64");
+      const encryptedHeaders = aesKey ?
+        await polarisSDK.encryptWithPresetKey(Buffer.from(JSON.stringify(config.headers)), aesKey) :
+        await polarisSDK.encrypt(
+          Buffer.from(JSON.stringify(config.headers)),
+          containerPublicKey
+        );
+      config.headers["polaris-secure"] = (encryptedHeaders as Buffer).toString("base64");
     }
 
     // Encrypt the body if it exists
     if (config.data) {
       if (config.data instanceof Readable) {
-        config.data = config.data.pipe(new EncryptStream(polarisSDK, aesKey));
+        config.data = config.data.pipe(new EncryptStream(polarisSDK, undefined, aesKey));
       } else {
         const encryptedData = await polarisSDK.encrypt(Buffer.from(config.data), containerPublicKey);
         config.data = encryptedData;
       }
     }
-
     return config;
   };
 };
@@ -106,7 +119,7 @@ export const createAxiosRequestInterceptor = ({
  */
 export const createAxiosResponseInterceptor = ({
   polarisSDK,
-  aesKey
+  aesKey,
 }: CreateAxiosResponseInterceptorParams): CreateAxiosResponseInterceptorResponse => {
   return async (response: AxiosResponse): Promise<AxiosResponse> => {
     // Passthrough responses from the Polaris system endpoints
@@ -118,8 +131,6 @@ export const createAxiosResponseInterceptor = ({
     const rspData = response.data;
     const cnfData = response.config.data;
     const data = rspData instanceof Readable ? rspData : cnfData;
-
-    console.log("response.headers", response.headers);
     if (!aesKey) {
       const wrappedKeyIv = response.headers["polaris-response-wrapped-key"] as string;
       if (wrappedKeyIv) {
@@ -128,15 +139,12 @@ export const createAxiosResponseInterceptor = ({
         const iv = await polarisSDK.unwrapKey(Buffer.from(wrappedKeyIvArray[1], "base64"));
         aesKey = {
           key,
-          iv
-        }
+          iv,
+        };
       }
     }
-
-    console.log("response.aesKey", { aesKey });
-
     if (data instanceof Readable) {
-      response.data = data.pipe(new DecryptStream(polarisSDK, aesKey))
+      response.data = data.pipe(new DecryptStream(polarisSDK, aesKey));
       response.config.responseType = "stream";
     } else if (response.config.data) {
       response.data = await polarisSDK.decrypt(data);
@@ -144,5 +152,4 @@ export const createAxiosResponseInterceptor = ({
     }
     return response;
   };
-
 };

@@ -44,10 +44,10 @@ export class EncryptStream extends Transform {
    */
   async encrypt(data: string): Promise<Buffer> {
     try {
-      const publicKey = this.publicKey || (await this.sdk.getPublicKey());
       if (this.aesKey) {
         return (await this.sdk.encryptWithPresetKey(Buffer.from(data), this.aesKey)) as Buffer;
       }
+      const publicKey = this.publicKey || (await this.sdk.getPublicKey());
       return this.sdk.encrypt(Buffer.from(data), publicKey);
     } catch (error: any) {
       throw new Error(`Failed to encrypt data: ${error.message}`);
