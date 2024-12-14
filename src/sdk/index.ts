@@ -3,7 +3,7 @@ import { CryptoProviderNode } from "../crypto/providers/node";
 
 import type { PolarisSDKInterface } from "./types";
 import type { CryptoProvider } from "../crypto";
-import type { AESEncryptionData } from "../crypto/types";
+import type { AESEncryptionData, AESKey } from "../crypto/types";
 import type { KeyHandler } from "../key/types";
 
 export class PolarisSDK implements PolarisSDKInterface {
@@ -53,6 +53,48 @@ export class PolarisSDK implements PolarisSDKInterface {
    */
   async unwrapKey(wrappedKey: Buffer): Promise<Buffer> {
     return this.keyHandler.unwrapKey(wrappedKey);
+  }
+
+  /**
+   * Generate a new random AES key for encryption purposes.
+   *
+   * This method creates a fresh AES key with a default key size, typically 256 bits, 
+   * unless specified otherwise in the `cryptoProvider`.
+   *
+   * @returns An object conforming to the AESKey interface, containing the key and IV
+   */
+  async createRandomAESKey(): Promise<AESKey> {
+    return this.cryptoProvider.createRandomAESKey()
+  }
+
+  /**
+   * Encrypt data using a preset AES key.
+   *
+   * This method supports both Buffer and ArrayBuffer data types for input flexibility. 
+   * It performs AES-GCM encryption by default, assuming the `AESKey` includes necessary 
+   * parameters like IV (Initialization Vector).
+   *
+   * @param data The data to encrypt, can be either Buffer or ArrayBuffer
+   * @param aesKey An AESKey object containing the encryption key and IV
+   * @returns The encrypted data as either Buffer or ArrayBuffer, matching the input type
+   */
+  async encryptWithPresetKey(data: Buffer | ArrayBuffer, aesKey: AESKey): Promise<Buffer | ArrayBuffer> {
+    return this.cryptoProvider.encryptWithPresetKey(data, aesKey);
+  }
+
+  /**
+   * Decrypt data using a preset AES key.
+   *
+   * This method decrypts data that was previously encrypted with AES-GCM, using the 
+   * provided AES key and IV. It supports decryption of both Buffer and ArrayBuffer 
+   * data types.
+   *
+   * @param data The encrypted data to decrypt, can be either Buffer or ArrayBuffer
+   * @param aesKey An AESKey object containing the decryption key and IV
+   * @returns The decrypted data as either Buffer or ArrayBuffer, matching the input type
+   */
+  async decryptWithPresetKey(data: Buffer | ArrayBuffer, aesKey: AESKey): Promise<Buffer | ArrayBuffer> {
+    return this.cryptoProvider.decryptWithPresetKey(data, aesKey);
   }
 
   /**

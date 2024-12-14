@@ -1,3 +1,4 @@
+import { AESKey } from "../../../crypto/types";
 import type { PolarisSDK } from "../../../sdk";
 import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
@@ -6,6 +7,7 @@ export interface CreateAxiosRequestInterceptorParams {
   enableInputEncryption?: boolean;
   enableOutputEncryption?: boolean;
   publicKey?: string;
+  aesKey?: AESKey;
   polarisProxyBasePath?: string;
 }
 
@@ -15,6 +17,7 @@ export type CreateAxiosRequestInterceptorResponse = (
 
 export interface CreateAxiosResponseInterceptorParams {
   polarisSDK: PolarisSDK;
+  aesKey?: AESKey;
 }
 
 export type CreateAxiosResponseInterceptorResponse = (response: AxiosResponse) => Promise<AxiosResponse>;

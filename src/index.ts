@@ -4,3 +4,4 @@ export * from "./key/handlers/ephemeral";
 export * from "./key/types";
 export * from "./sdk/types";
 export * from "./sdk";
+export * from "./interceptors/axios/utils";

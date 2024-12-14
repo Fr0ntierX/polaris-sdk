@@ -1,3 +1,13 @@
+export interface EncryptedData {
+  authTag: Buffer,
+  cipherText: Buffer
+}
+
+export interface AESKey {
+  key: any,
+  iv: any
+}
+
 export interface AESEncryptionData {
   /** The encrypted data ciphertext */
   ciphertext: Buffer;
